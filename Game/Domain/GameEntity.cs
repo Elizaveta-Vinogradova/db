@@ -77,31 +77,23 @@ namespace Game.Domain
                 player.Decision = decision;
             }
         }
-
+        
         public GameTurnEntity FinishTurn()
         {
-            var winnerId = Guid.Empty;
-            for (int i = 0; i < 2; i++)
+            var gameTurn = new GameTurnEntity(players, CurrentTurnIndex, Id);
+            for (var i = 0; i < 2; i++)
             {
                 var player = Players[i];
                 var opponent = Players[1 - i];
                 if (!player.Decision.HasValue || !opponent.Decision.HasValue)
                     throw new InvalidOperationException();
-                if (player.Decision.Value.Beats(opponent.Decision.Value))
-                {
-                    player.Score++;
-                    winnerId = player.UserId;
-                }
+                if (!player.Decision.Value.Beats(opponent.Decision.Value)) continue;
+                player.Score++;
+                gameTurn.WinnerId = player.UserId;
             }
-            //TODO Заполнить все внутри GameTurnEntity, в том числе winnerId
-            var result = new GameTurnEntity();
-            // Это должно быть после создания GameTurnEntity
-            foreach (var player in Players)
-                player.Decision = null;
+
             CurrentTurnIndex++;
-            if (CurrentTurnIndex == TurnsCount)
-                Status = GameStatus.Finished;
-            return result;
+            return gameTurn;
         }
     }
 }
