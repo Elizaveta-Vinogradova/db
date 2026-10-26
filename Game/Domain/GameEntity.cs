@@ -80,7 +80,7 @@ namespace Game.Domain
         
         public GameTurnEntity FinishTurn()
         {
-            var gameTurn = new GameTurnEntity(players, CurrentTurnIndex, Id);
+            var winnerId = Guid.Empty;
             for (var i = 0; i < 2; i++)
             {
                 var player = Players[i];
@@ -89,10 +89,20 @@ namespace Game.Domain
                     throw new InvalidOperationException();
                 if (!player.Decision.Value.Beats(opponent.Decision.Value)) continue;
                 player.Score++;
-                gameTurn.WinnerId = player.UserId;
+                winnerId = player.UserId;
             }
+            var playersCopy = players
+                .Select(p => new Player(p.UserId, p.Name) { Score = p.Score, Decision = p.Decision })
+                .ToList();
+            var gameTurn = new GameTurnEntity(playersCopy, CurrentTurnIndex, Id) { WinnerId = winnerId };
+            
+            foreach (var player in players)
+                player.Decision = null;
 
             CurrentTurnIndex++;
+            if (CurrentTurnIndex >= TurnsCount)
+                Status = GameStatus.Finished;
+            
             return gameTurn;
         }
     }

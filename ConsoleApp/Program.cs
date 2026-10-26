@@ -183,6 +183,7 @@ namespace ConsoleApp
 
         private void ShowScore(GameEntity game)
         {
+            Console.WriteLine($"-----------------------------------");
             var players = game.Players;
             var gameTurns = gameTurnRepo.FindAllGamesById(game.Id, 5);
             foreach(var gameTurn in gameTurns)

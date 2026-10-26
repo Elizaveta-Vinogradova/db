@@ -15,8 +15,8 @@ namespace Game.Domain
             gameTurnCollection = database.GetCollection<GameTurnEntity>(CollectionName);
             var indexModel =
                 new CreateIndexModel<GameTurnEntity>(Builders<GameTurnEntity>.IndexKeys
-                    .Ascending(x => x.GameId)
-                    .Ascending(x => x.TurnIndex), new CreateIndexOptions { Unique = true }
+                    .Ascending(x => x.Id.GameId)
+                    .Ascending(x => x.Id.TurnIndex), new CreateIndexOptions { Unique = true }
                 );
             gameTurnCollection.Indexes.CreateOne(indexModel);
         }
@@ -29,8 +29,8 @@ namespace Game.Domain
         public List<GameTurnEntity> FindAllGamesById(Guid gameId, int count)
         {
             return gameTurnCollection
-                .Find(x => x.GameId == gameId)
-                .SortByDescending(x => x.TurnIndex)
+                .Find(x => x.Id.GameId == gameId)
+                .SortByDescending(x => x.Id.TurnIndex)
                 .Limit(count).
                 ToList();
         }
