@@ -91,6 +91,7 @@ namespace Game.Domain
                 player.Score++;
                 winnerId = player.UserId;
             }
+            
             var playersCopy = players
                 .Select(p => new Player(p.UserId, p.Name) { Score = p.Score, Decision = p.Decision })
                 .ToList();
